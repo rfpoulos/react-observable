@@ -1,18 +1,57 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Subject, from } from 'rxjs';
+import {  
+          filter, 
+          debounceTime, 
+          distinctUntilChanged,
+          switchMap,
+         } from 'rxjs/operators';
+
+let searchGithub = (term) =>
+    fetch(`https://api.github.com/search/users?q=${term}`)
+    .then(data => data.json());
 
 class App extends Component {
+  constructor() {
+    super()
+    this.subject = new Subject()
+      .pipe(
+        debounceTime(500),
+        filter(value => value.length > 2),
+        distinctUntilChanged(),
+        switchMap(value => 
+          from(searchGithub(value))),
+      )
+    this.state = {
+      input: '',
+      results: [],
+    }
+  }
+
+  componentDidMount() {
+      this.subject
+        .subscribe(data => this.setState({ results: data.items }))
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.input !== this.state.input) {
+      this.subject.next(this.state.input);
+    }
+  }
+
+  handleOnChange(value) {
+    this.setState({ input: value })
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+      <div>
+        <input type="text" value={this.state.input} 
+          onChange={(event) => this.handleOnChange(event.target.value)} />
+        <ul>{
+          this.state.results.map((result, i) => 
+            <li key={i}>{result.login}</li>)
+        }</ul>
       </div>
     );
   }
