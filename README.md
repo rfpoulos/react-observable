@@ -35,11 +35,15 @@ class App extends Component {
 
   componentDidMount() {
       this.subject
-        .subscribe(data => this.setState({ results: data.items }))
+        .subscribe(data => this.setState({ results: data.items }));
+  }
+
+  componentWillUnmount() {
+    this.subject.complete();
   }
 
   handleOnChange = (event) => {
-    this.setState({ input: event.target.value })
+    this.setState({ input: event.target.value });
     this.subject.next(event.target.value);
   }
 
@@ -58,5 +62,6 @@ class App extends Component {
 }
 
 export default App;
+
 
 ```
