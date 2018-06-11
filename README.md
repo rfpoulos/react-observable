@@ -38,21 +38,16 @@ class App extends Component {
         .subscribe(data => this.setState({ results: data.items }))
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.input !== this.state.input) {
-      this.subject.next(this.state.input);
-    }
-  }
-
-  handleOnChange(value) {
-    this.setState({ input: value })
+  handleOnChange = (event) => {
+    this.setState({ input: event.target.value })
+    this.subject.next(event.target.value);
   }
 
   render() {
     return (
       <div>
         <input type="text" value={this.state.input} 
-          onChange={(event) => this.handleOnChange(event.target.value)} />
+          onChange={this.handleOnChange} />
         <ul>{
           this.state.results.map((result, i) => 
             <li key={i}>{result.login}</li>)
