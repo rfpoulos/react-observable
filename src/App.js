@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Subject, from } from 'rxjs';
+import { 
+  Subject
+} from 'rxjs';
 import {  
           filter, 
           debounceTime, 
           distinctUntilChanged,
           switchMap,
-         } from 'rxjs/operators';
+} from 'rxjs/operators';
 
 let searchGithub = (term) =>
     fetch(`https://api.github.com/search/users?q=${term}`)
@@ -19,8 +21,7 @@ class App extends Component {
         debounceTime(500),
         filter(value => value.length > 2),
         distinctUntilChanged(),
-        switchMap(value => 
-          from(searchGithub(value))),
+        switchMap(value => searchGithub(value)),
       )
     this.state = {
       input: '',
@@ -30,7 +31,7 @@ class App extends Component {
 
   componentDidMount() {
       this.subject
-        .subscribe(data => this.setState({ results: data.items }));
+      .subscribe(data => this.setState({ results: data.items }));
   }
 
   componentWillUnmount() {
