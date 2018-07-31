@@ -24,7 +24,6 @@ class App extends Component {
         switchMap(value => searchGithub(value)),
       )
     this.state = {
-      input: '',
       results: [],
     }
   }
@@ -39,14 +38,13 @@ class App extends Component {
   }
 
   handleOnChange = (event) => {
-    this.setState({ input: event.target.value });
     this.subject.next(event.target.value);
   }
 
   render() {
     return (
       <div>
-        <input type="text" value={this.state.input} 
+        <input type="text" 
           onChange={this.handleOnChange} />
         <ul>{
           this.state.results.map((result, i) => 
