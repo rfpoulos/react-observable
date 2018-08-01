@@ -19,9 +19,9 @@ class App extends Component {
     this.subject = new Subject()
       .pipe(
         debounceTime(500),
-        filter(value => value.length > 2),
+        filter(value => value.length > 2 || value.length === 0),
         distinctUntilChanged(),
-        switchMap(value => searchGithub(value)),
+        switchMap(value => (value.length === 0) ? {results: []} :searchGithub(value)),
       )
     this.state = {
       results: [],
