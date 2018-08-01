@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { 
-  Subject
+  Subject, 
 } from 'rxjs';
 import {  
-          filter, 
-          debounceTime, 
-          distinctUntilChanged,
-          switchMap,
+  filter, 
+  debounceTime, 
+  distinctUntilChanged,
+  switchMap,
 } from 'rxjs/operators';
 
 let searchGithub = (term) =>
@@ -44,7 +44,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <input type="text" 
+        <input type="text"
           onChange={this.handleOnChange} />
         <ul>{
           this.state.results.map((result, i) => 
