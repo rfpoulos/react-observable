@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { 
   Subject, 
+  from,
 } from 'rxjs';
 import {  
   filter, 
-  debounceTime, 
+  debounceTime,
   distinctUntilChanged,
   switchMap,
 } from 'rxjs/operators';
@@ -18,10 +19,12 @@ class App extends Component {
     super()
     this.subject = new Subject()
       .pipe(
-        debounceTime(500),
-        filter(value => value.length > 2 || value.length === 0),
-        distinctUntilChanged(),
-        switchMap(value => (value.length === 0) ? {results: []} :searchGithub(value)),
+        debounceTime(350),
+        filter(query => query.length >= 2 || query.length === 0), 
+        distinctUntilChanged(), 
+        switchMap(value => value ?
+            from(searchGithub(value)) : from(Promise.resolve({items: []}))
+          )
       )
     this.state = {
       results: [],
@@ -30,7 +33,7 @@ class App extends Component {
 
   componentDidMount() {
       this.subject
-      .subscribe(data => this.setState({ results: data.items }));
+        .subscribe(data => this.setState({ results: data.items }));
   }
 
   componentWillUnmount() {
@@ -45,6 +48,7 @@ class App extends Component {
     return (
       <div>
         <input type="text"
+          placeholder="Search Github Users"
           onChange={this.handleOnChange} />
         <ul>{
           this.state.results.map((result, i) => 
